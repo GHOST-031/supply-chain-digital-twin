@@ -1,0 +1,38 @@
+# Unverified Items and Evidence Gaps
+
+This list separates questions that source/tests answer from claims that would require a browser, real data, or physical device. No listed gap should be represented as verified in a presentation.
+
+| Item | Current evidence | Missing evidence | How to verify |
+|---|---|---|---|
+| Physical serial connection on the intended ESP8266/HC-SR04 | Python serial service exercised with mocked serial streams; protocol/pins inspected in source | Actual board, cable, OS port, firmware upload, serial ownership and readings | With hardware available, close Arduino Serial Monitor, connect intended port at 115200, confirm valid recent lines in sidebar, and check Disconnected/Error + simulation fallback after disconnect |
+| Wiring/electrical safety | Firmware comments and setup doc specify D1/GPIO5 TRIG, D2/GPIO4 ECHO and ECHO level shifting | Physical pin trace, HC-SR04 module voltage, level-shifter/divider, common ground, power and board variant | Inspect actual circuit with hardware docs and qualified supervision; confirm no 5 V ECHO reaches ESP8266 GPIO directly |
+| Firmware compilation/upload | Firmware source is syntactically plausible Arduino C++ and parser-compatible strings match | Arduino toolchain/board package build and successful board upload | Compile for the actual NodeMCU variant and upload only after confirming wiring; monitor output while app is disconnected |
+| Sensor calibration accuracy | Formula and default outputs were independently calculated; prior distance medians were supplied as context | Repeatable trials, placement tolerances, package geometry, variation under repositioning, experimentally confirmed target-full condition | Repeat empty and known-arrangement readings over multiple placements; record median/spread and decide whether 2.6 cm corresponds to a defined maximum-load state |
+| Meaning of 0–100% for side-mounted geometry | Linear interpolation maps two distance endpoints; current UI labels estimate and disclaims volume/count | Evidence that intermediate distance changes correspond to monotonic occupied capacity for all package layouts | Test several known arrangements and compare estimate with independently measured package counts/volume; label as arrangement-specific if relation is not uniform |
+| Actual warehouse forecast performance | Exact synthetic train/test evaluation reproduced | Real chronological demand history, suitable business context, drift handling and prospective evaluation | Collect representative sales/consumption data, preserve temporal order, evaluate against baseline on unseen periods before making accuracy claims |
+| Browser visual and accessibility behavior | All six pages rendered through Streamlit AppTest; source charts/components inspected | Browser screenshot review at intended laptop/projector resolutions, keyboard and screen-reader behavior, chart hover actions | Run app in supported browser at demo resolution and exercise every control, chart, nav item, warning and download |
+| CSV download bytes vs visible row | Same `table` DataFrame is passed to `st.dataframe` and `table.to_csv`; AppTest rendered the download element | Actual browser download bytes and exact parsed equality to displayed row | Click download in a browser, load CSV with pandas, compare every column/value to the visible current table |
+| Cross-session/concurrent sensor ownership | Cached process-wide service ensures a single service/port within process; tests ensure same active port is not opened twice | Multi-browser/multi-user tests, competing serial program behavior, multiple worker process behavior | Exercise two sessions and confirm shared service status, then test expected deployment topology; document local single-user demo assumption |
+| Long-duration stability/memory | Bounded histories are generated per rerun; only current sensor sample is kept | Multi-hour runtime test, repeated connection churn, background thread behavior under OS-level driver errors | Run soak test with mock stream and then actual hardware while monitoring thread/descriptor count; do not use unsafe device tests |
+| Fresh environment installation | Existing `.venv` versions queried; dependency constraints inspected | Clean environment resolution/install and launch | Create a separate disposable environment and install requirements; do not alter the demo environment until validated |
+| AppTest edge branches | Normal default state and all pages render; existing unit tests check model/sensor invalid paths | UI render under missing model, malformed input in session state, invalid calibration branch, missing pyserial, zero demand, demand prediction failure | Add isolated tests/mocks for each state, or temporarily test with copied project fixtures rather than renaming production artifacts |
+| Navigation and controls in actual browser | Native `st.navigation` source and `AppTest.switch_page` evidence | Real browser click/touch behavior and layout at different widths | Exercise all six sidebar links in browser; verify selected page, controls and no rerun surprises |
+| Sensor auto-connect uniqueness on real OS | Mock tests verify one candidate vs multiple candidates; device name matcher source inspected | Real macOS enumeration descriptions/VID/PID for the team's NodeMCU and handling of driver aliases | Connect actual board and inspect only its enumerated port; with multiple devices verify manual selection and no arbitrary port opening |
+| Timestamp and staleness perception | Source records UTC timestamp on accepted sample and measures age monotonic; mock stale test passes | UI timer accuracy over browser reruns and the physical sender's actual rate | Watch age/status with hardware and confirm no stale sample remains shown as current |
+| Physical sensor geometry and calibration validity | Active UI/setup wording now reflects the supplied horizontal side mount; geometry is based on the project owner's description | Independent inspection of actual mounting and experiments showing the target/linear mapping tracks useful occupancy states | Confirm mounting and repeat measured trials for multiple package arrangements; do not call 2.6 cm physically full without validation |
+| Old backup snapshots | File names and inventory are recorded; they are not imported by active app | Full forensic comparison of every historical snapshot against current code | Needed only if a regression is suspected; compare snapshot diffs without restoring or executing backup files |
+
+## Explicit non-claims
+
+- No real-world forecasting accuracy claim.
+- No claim that the ultrasonic sensor estimates true volume, mass, or exact package count.
+- No claim that the 2.6 cm target is a validated physical full state.
+- No claim that serial hardware is connected or working.
+- No claim that firmware compiles or has been uploaded.
+- No claim of browser E2E, visual accessibility, or verified download payload.
+- No claim that an order is placed or supplier contacted.
+- No claim that the system learns or retrains continuously.
+
+## Completeness boundary
+
+Active source files, model files, CSV schema/quality, notebook code/output text, evaluation script, firmware source, setup/dependency docs, and the existing unit tests were inspected or executed as detailed in `PROJECT_A_TO_Z_AUDIT.md` and `TEST_AND_VERIFICATION_REPORT.md`. Historical backups were inventoried but not line-by-line functionally audited because the active runtime does not import them. Python bytecode caches and `.venv` package internals were excluded as generated/vendor files. Browser and physical-device evidence remain the principal gaps.
