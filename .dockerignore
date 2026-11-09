@@ -1,0 +1,36 @@
+# Version control and local environments
+.git/
+.venv/
+venv/
+
+# Python and test caches
+__pycache__/
+**/__pycache__/
+.pytest_cache/
+**/.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local backups and operating-system files
+backups/
+**/backups/
+.DS_Store
+**/.DS_Store
+
+# Local secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+**/.streamlit/secrets.toml
+.secrets/
+secrets/
+
+# Temporary files
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+*.py[cod]
+*.swp
+*.tmp
+*.log
+*~
